@@ -1,0 +1,9 @@
+*.root
+*.log
+./vscode/*
+*.xml
+*.d
+*.so
+*.pcm
+my*
+*.pdf
