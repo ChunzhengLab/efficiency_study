@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "AddTaskMyTaskMyMC.C": "cpp",
+    "DrawTest.C": "cpp",
+    "AddTaskMyTaskMyMC copy.C": "cpp",
+    "AddTaskMyTaskMyMCLambda.C": "cpp",
+    "runAnalysis.C": "cpp",
+    "MakeEffFileHadronProton.C": "cpp",
+    "DrawTest copy.C": "cpp",
+    "DrawTestLambda.C": "cpp"
+  }
+}

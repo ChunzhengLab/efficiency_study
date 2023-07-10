@@ -22,16 +22,16 @@ void runAnalysis()
   // Task Name
   TString taskName = "MCEfficiency";
   // Dataset
-  TString dataset = "LHC18q";
+  TString dataset = "LHC18r";
   bool isMC = 1;
 
   // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
   // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
   bool local      = 0;
   bool gridTest   = 0;
-  bool gridRun    = 1;
+  bool gridRun    = 0;
   bool gridMerge  = 0;
-  bool localMerge = 0;
+  bool localMerge = 1;
 
   std::vector<bool> boolVector = {local, gridTest, gridRun, gridMerge, localMerge};
   int trueCount = std::count(boolVector.begin(), boolVector.end(), true);
@@ -234,7 +234,7 @@ void runAnalysis()
          // "295610","295589","295588","295586","295585"
 
         //随机选50个run number,一次性选完
-        // alienHandler->AddRunNumber(296623);
+        alienHandler->AddRunNumber(296623);
         alienHandler->AddRunNumber(296622);
         alienHandler->AddRunNumber(296621);
         alienHandler->AddRunNumber(296619);
