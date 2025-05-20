@@ -7,3 +7,7 @@
 *.pcm
 my*
 *.pdf
+.cache
+stderr
+stdout
+*ACLiC*

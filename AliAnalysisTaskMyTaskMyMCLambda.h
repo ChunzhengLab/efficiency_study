@@ -37,6 +37,7 @@ class AliAnalysisTaskMyTaskMyMCLambda : public AliAnalysisTaskSE
   AliMultSelection *fMultSel; //! MultSelection object
   AliVVertex *fVtx;     //! vertexer object
   AliEventCuts fEventCuts; //! event cuts object
+  AliMCEvent *fMC; //!
 
   double fVertex[3];
   TList* fOutputList;
@@ -51,6 +52,22 @@ class AliAnalysisTaskMyTaskMyMCLambda : public AliAnalysisTaskSE
   TH1D* h_pt_neghadron_mc;
   TH1D* h_pt_poshadron_rc;
   TH1D* h_pt_neghadron_rc;
+
+  //pion
+  TH1D* h_eta_pospion_mc;
+  TH1D* h_eta_negpion_mc;
+  TH1D* h_eta_pospion_rc;
+  TH1D* h_eta_negpion_rc;
+  TH1D* h_eta_pospion_rc_real;
+  TH1D* h_eta_negpion_rc_real;
+
+
+  TH1D* h_pt_pospion_mc;
+  TH1D* h_pt_negpion_mc;
+  TH1D* h_pt_pospion_rc;
+  TH1D* h_pt_negpion_rc;
+  TH1D* h_pt_pospion_rc_real;
+  TH1D* h_pt_negpion_rc_real;
 
   //proton
   TH1D* h_eta_proton_mc;
@@ -87,6 +104,17 @@ class AliAnalysisTaskMyTaskMyMCLambda : public AliAnalysisTaskSE
   TH1D* h_mass_lambda_rc_real;
   TH1D* h_mass_antilambda_rc_real;
 
+  //proton dca
+  TH2D* h_pt_dca_proton_origin;
+  TH2D* h_pt_dca_proton_material;
+  TH2D* h_pt_dca_proton_lambdadecay;
+  TH2D* h_pt_dca_proton_otherdecay;
+
+  //proton dca
+  TH2D* h_pt_dca_antiproton_origin;
+  TH2D* h_pt_dca_antiproton_material;
+  TH2D* h_pt_dca_antiproton_lambdadecay;
+  TH2D* h_pt_dca_antiproton_otherdecay;
 
   AliAnalysisTaskMyTaskMyMCLambda(const AliAnalysisTaskMyTaskMyMCLambda&);
   AliAnalysisTaskMyTaskMyMCLambda& operator=(const AliAnalysisTaskMyTaskMyMCLambda&);
