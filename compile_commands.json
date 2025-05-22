@@ -1,7 +1,7 @@
 [
-{
-  "directory": ".",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DCORRFW_EXPORTS -DWITHALIEN -DWITHXML -D_MODULE_=\\\"CORRFW\\\" -I/Users/wangchunzheng/alice/sw/osx_arm64/AliRoot/de9a88a2b320dd553e6a70a9291f8d3091c59f37_O2-local1/include -I/Users/wangchunzheng/alice/sw/osx_arm64/AliRoot/de9a88a2b320dd553e6a70a9291f8d3091c59f37_O2-local1/include/pythia -I/Users/wangchunzheng/alice/sw/osx_arm64/VMC/v2-0-local1/include/vmc -I/Users/wangchunzheng/alice/AliPhysics/CORRFW -isystem /Users/wangchunzheng/alice/sw/osx_arm64/AliEn-Runtime/v2-19-le-local1/include -isystem /Users/wangchunzheng/alice/sw/osx_arm64/ROOT/v6-32-06-alice7-local1/include -fPIC -O2 -std=c++20 -Werror=mismatched-new-delete -Werror=delete-non-virtual-dtor -Wno-error=strict-aliasing -Wall -Wno-missing-braces -Wno-error -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.4.sdk -mmacosx-version-min=14.0 -fPIC -o CORRFW/CMakeFiles/CORRFW.dir/AliCFAcceptanceCuts.cxx.o -c /Users/wangchunzheng/alice/sw/SOURCES/AliPhysics/0_O2/0/CORRFW/AliCFAcceptanceCuts.cxx",
-  "file": "/Users/wangchunzheng/works/Experiments/cve/EfficiencyCorrection/AliAnalysisTaskMyTaskMyMCLambda.cxx"
-}
+  {
+    "directory": "/Users/wangchunzheng/works/Experiments/cve/EfficiencyCorrection",
+    "command": "/usr/bin/c++ -I/Users/wangchunzheng/alice/sw/osx_arm64/AliRoot/latest/include -I/Users/wangchunzheng/alice/sw/osx_arm64/AliRoot/latest/include/pythia -I/Users/wangchunzheng/alice/sw/osx_arm64/VMC/v2-0-local1/include/vmc -I/Users/wangchunzheng/alice/sw/SOURCES/AliPhysics/0_O2/0/OADB -I/Users/wangchunzheng/alice/sw/SOURCES/AliPhysics/0_O2/0/OADB/COMMON/MULTIPLICITY -I/Users/wangchunzheng/alice/sw/osx_arm64/ROOT/latest/include -std=c++20 -O2 -fPIC -Wall -c ./src/AliAnalysisTaskMyTaskMyMCLambda.cxx -o AliAnalysisTaskMyTaskMyMCLambda.o",
+    "file": "src/AliAnalysisTaskMyTaskMyMCLambda.cxx"
+  }
 ]

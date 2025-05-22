@@ -11,3 +11,5 @@ my*
 stderr
 stdout
 *ACLiC*
+.ropeproject
+.DS_Store

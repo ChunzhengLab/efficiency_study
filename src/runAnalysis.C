@@ -20,18 +20,18 @@
 void runAnalysis()
 {
   // Task Name
-  TString taskName = "EfficiencyCorrectionTest";
+  TString taskName = "EfficiencyCorrection2025";
   // Dataset
-  TString dataset = "LHC18r";
+  TString dataset = "LHC18q";
   bool isMC = 1;
 
   // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
   // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
-  bool local      = 1;
+  bool local      = 0;
   bool gridTest   = 0;
   bool gridRun    = 0;
   bool gridMerge  = 0;
-  bool localMerge = 0;
+  bool localMerge = 1;
 
   std::vector<bool> boolVector = {local, gridTest, gridRun, gridMerge, localMerge};
   int trueCount = std::count(boolVector.begin(), boolVector.end(), true);
@@ -109,9 +109,16 @@ void runAnalysis()
     //   chain->Add("/Users/wangchunzheng/alice/data/2018/LHC18q/000295588/pass3/AOD252/AOD/001/AliAOD.root");
     // if (dataset.EqualTo("LHC18r"))
     //   chain->Add("/Users/wangchunzheng/alice/data/2018/LHC18r/000296691/pass3/AOD252/0001/AliAOD.root");
-    if (dataset.EqualTo("LHC18q") || dataset.EqualTo("LHC18r"))
-      chain->Add("/Users/wangchunzheng/alice/sim/2020/LHC20e3a/295585/AOD243/0001/AliAOD.root");
-    chain->Add("AliAOD.root");
+    if(isMC) {
+        if (dataset.EqualTo("LHC18q") || dataset.EqualTo("LHC18r"))
+            chain->Add("/Users/wangchunzheng/alice/sim/2020/LHC20e3a/295585/AOD243/0001/AliAOD.root");
+    }
+    else {
+        if (dataset.EqualTo("LHC18q"))
+            chain->Add("/Users/wangchunzheng/alice/data/2018/LHC18q/000295588/pass3/AOD252/AOD/001/AliAOD.root");
+        if (dataset.EqualTo("LHC18r"))
+            chain->Add("/Users/wangchunzheng/alice/data/2018/LHC18r/000296691/pass3/AOD252/0001/AliAOD.root");
+    }
     // start the analysis locally, reading the events from the tchain
     mgr->StartAnalysis("local", chain);
   }
@@ -380,63 +387,63 @@ void runAnalysis()
         alienHandler->AddRunNumber(297595);
         alienHandler->AddRunNumber(297590);
         alienHandler->AddRunNumber(297588);
-        // alienHandler->AddRunNumber(297558);
-        // alienHandler->AddRunNumber(297544);
-        // alienHandler->AddRunNumber(297542);
-        // alienHandler->AddRunNumber(297541);
-        // alienHandler->AddRunNumber(297540);
-        // alienHandler->AddRunNumber(297537);
-        // alienHandler->AddRunNumber(297512);
-        // alienHandler->AddRunNumber(297483);
-        // alienHandler->AddRunNumber(297479);
-        // alienHandler->AddRunNumber(297452);
-        // alienHandler->AddRunNumber(297451);
-        // alienHandler->AddRunNumber(297450);
-        // alienHandler->AddRunNumber(297446);
-        // alienHandler->AddRunNumber(297442);
-        // alienHandler->AddRunNumber(297441);
-        // alienHandler->AddRunNumber(297415);
-        // alienHandler->AddRunNumber(297414);
-        // alienHandler->AddRunNumber(297413);
-        // alienHandler->AddRunNumber(297406);
-        // alienHandler->AddRunNumber(297405);
-        // alienHandler->AddRunNumber(297380);
-        // alienHandler->AddRunNumber(297379);
-        // alienHandler->AddRunNumber(297372);
-        // alienHandler->AddRunNumber(297367);
-        // alienHandler->AddRunNumber(297366);
-        // alienHandler->AddRunNumber(297363);
-        // alienHandler->AddRunNumber(297336);
-        // alienHandler->AddRunNumber(297335);
-        // alienHandler->AddRunNumber(297333);
-        // alienHandler->AddRunNumber(297332);
-        // alienHandler->AddRunNumber(297317);
-        // alienHandler->AddRunNumber(297311);
-        // alienHandler->AddRunNumber(297310);
-        // alienHandler->AddRunNumber(297278);
-        // alienHandler->AddRunNumber(297222);
-        // alienHandler->AddRunNumber(297221);
-        // alienHandler->AddRunNumber(297218);
-        // alienHandler->AddRunNumber(297196);
-        // alienHandler->AddRunNumber(297195);
-        // alienHandler->AddRunNumber(297193);
-        // alienHandler->AddRunNumber(297133);
-        // alienHandler->AddRunNumber(297132);
-        // alienHandler->AddRunNumber(297129);
-        // alienHandler->AddRunNumber(297128);
-        // alienHandler->AddRunNumber(297124);
-        // alienHandler->AddRunNumber(297123);
-        // alienHandler->AddRunNumber(297119);
-        // alienHandler->AddRunNumber(297118);
-        // alienHandler->AddRunNumber(297117);
-        // alienHandler->AddRunNumber(297085);
-        // alienHandler->AddRunNumber(297035);
-        // alienHandler->AddRunNumber(297031);
-        // alienHandler->AddRunNumber(296966);
-        // alienHandler->AddRunNumber(296941);
-        // alienHandler->AddRunNumber(296938);
-        // alienHandler->AddRunNumber(296935);
-        // alienHandler->AddRunNumber(296934);
+        alienHandler->AddRunNumber(297558);
+        alienHandler->AddRunNumber(297544);
+        alienHandler->AddRunNumber(297542);
+        alienHandler->AddRunNumber(297541);
+        alienHandler->AddRunNumber(297540);
+        alienHandler->AddRunNumber(297537);
+        alienHandler->AddRunNumber(297512);
+        alienHandler->AddRunNumber(297483);
+        alienHandler->AddRunNumber(297479);
+        alienHandler->AddRunNumber(297452);
+        alienHandler->AddRunNumber(297451);
+        alienHandler->AddRunNumber(297450);
+        alienHandler->AddRunNumber(297446);
+        alienHandler->AddRunNumber(297442);
+        alienHandler->AddRunNumber(297441);
+        alienHandler->AddRunNumber(297415);
+        alienHandler->AddRunNumber(297414);
+        alienHandler->AddRunNumber(297413);
+        alienHandler->AddRunNumber(297406);
+        alienHandler->AddRunNumber(297405);
+        alienHandler->AddRunNumber(297380);
+        alienHandler->AddRunNumber(297379);
+        alienHandler->AddRunNumber(297372);
+        alienHandler->AddRunNumber(297367);
+        alienHandler->AddRunNumber(297366);
+        alienHandler->AddRunNumber(297363);
+        alienHandler->AddRunNumber(297336);
+        alienHandler->AddRunNumber(297335);
+        alienHandler->AddRunNumber(297333);
+        alienHandler->AddRunNumber(297332);
+        alienHandler->AddRunNumber(297317);
+        alienHandler->AddRunNumber(297311);
+        alienHandler->AddRunNumber(297310);
+        alienHandler->AddRunNumber(297278);
+        alienHandler->AddRunNumber(297222);
+        alienHandler->AddRunNumber(297221);
+        alienHandler->AddRunNumber(297218);
+        alienHandler->AddRunNumber(297196);
+        alienHandler->AddRunNumber(297195);
+        alienHandler->AddRunNumber(297193);
+        alienHandler->AddRunNumber(297133);
+        alienHandler->AddRunNumber(297132);
+        alienHandler->AddRunNumber(297129);
+        alienHandler->AddRunNumber(297128);
+        alienHandler->AddRunNumber(297124);
+        alienHandler->AddRunNumber(297123);
+        alienHandler->AddRunNumber(297119);
+        alienHandler->AddRunNumber(297118);
+        alienHandler->AddRunNumber(297117);
+        alienHandler->AddRunNumber(297085);
+        alienHandler->AddRunNumber(297035);
+        alienHandler->AddRunNumber(297031);
+        alienHandler->AddRunNumber(296966);
+        alienHandler->AddRunNumber(296941);
+        alienHandler->AddRunNumber(296938);
+        alienHandler->AddRunNumber(296935);
+        alienHandler->AddRunNumber(296934);
 
         // alienHandler->AddRunNumber(296932);
         // alienHandler->AddRunNumber(296931);
