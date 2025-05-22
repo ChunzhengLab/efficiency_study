@@ -1,3 +1,3 @@
-# EfficiencyCorrection
+# efficiency_study
 
-Check the efficiency vs. pT for the charged particles ,$pi^\pm$, $p(\bar{p})$ and $\Lambda(\bar{\Lambda})$
+Check the efficiency vs. $p_T$ for the $h^{\pm}$, $\pi^{\pm}$, $p(\bar{p})$ and $\Lambda(\bar{\Lambda})$
