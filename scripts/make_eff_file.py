@@ -1,259 +1,211 @@
-import ROOT
-from array import array
-import math
-import sys
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+生成效率图和权重图，并保存为ROOT文件。
+"""
 
-# =================== 统一管理每个粒子的bin边界 ===================
+import ROOT
+import math
+from array import array
+
+ROOT.gROOT.SetBatch(True)  # 不弹出Canvas
+ROOT.TH1.AddDirectory(False)
+
+# ------------------------------------------------------------
+# 1. 自定义 pT rebin 边界
+# ------------------------------------------------------------
 pt_bins_dict = {
-    "proton":      [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0],
-    "antiproton":  [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0],
-    "poshadron":   [0.2, 0.3,0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-    "neghadron":   [0.2, 0.3,0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-    "pospion":     [0.2, 0.3,0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-    "negpion":     [0.2, 0.3,0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-    "lambda":      [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 12.0, 14.0, 16.0, 18.0],
-    "antilambda":  [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0,
-                    2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 12.0, 14.0, 16.0, 18.0],
+    "proton"     : [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.4, 4.6, 5.0],
+    "antiproton" : [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.4, 4.6, 5.0],
+    "poshadron"  : [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.4, 4.6, 5.0],
+    "neghadron"  : [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.4, 4.6, 5.0],
+    "pospion_tpc_region" : [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5],
+    "negpion_tpc_region" : [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5],
+    "pospion_tof_region" : [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.4, 4.6, 5.0],
+    "negpion_tof_region" : [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.4, 4.6, 5.0],
+    "lambda"     : [0.5, 0.7, 0.8, 0.9, 1.0, 1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.3, 3.6, 4.0, 4.4, 4.9, 5.5, 6.3, 7.1, 8.0, 9.0, 10.0],
+    "antilambda" : [0.5, 0.7, 0.8, 0.9, 1.0, 1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.3, 3.6, 4.0, 4.4, 4.9, 5.5, 6.3, 7.1, 8.0, 9.0, 10.0]
 }
 
-def get_rebin_edges(particle):
-    return pt_bins_dict.get(particle, None)
+# 中心度区间定义
+cent_ranges = ["0-10%", "10-20%", "20-30%", "30-40%", "40-50%", "50-60%", "60-70%"]
 
-def rebin_hist(hist, new_edges):
-    arr = array('d', new_edges)
-    name = hist.GetName() + "_rebin"
-    nbins = len(new_edges) - 1
-    return hist.Rebin(nbins, name, arr)
+def rebin(h, edges):
+    """根据给定的边界值对直方图进行重新分bin"""
+    new_edges = array('d', edges)
+    nb = len(edges) - 1
+    return h.Rebin(nb, h.GetName() + "_rebin", new_edges)
 
-def find_inconsistent_bins(hnum, hden):
-    inconsistent_bins = []
-    for ibin in range(1, hnum.GetNbinsX() + 1):
-        passed = hnum.GetBinContent(ibin)
-        total = hden.GetBinContent(ibin)
-        if passed > total + 1e-6:  # allow a tiny numerical tolerance
-            inconsistent_bins.append(ibin)
-    return inconsistent_bins
+# ------------------------------------------------------------
+# 主程序开始
+# ------------------------------------------------------------
 
-def pt_ranges_from_bins(hist, bins):
-    edges = [hist.GetXaxis().GetBinLowEdge(i) for i in bins]
-    edges2 = [hist.GetXaxis().GetBinUpEdge(bins[0])] if len(bins)==1 else [hist.GetXaxis().GetBinUpEdge(i) for i in bins]
-    return [f"[{edges[i-1]:.3f}, {edges2[i-1]:.3f})" for i in range(1, len(bins)+1)]
+# 定义要处理的输入文件
+input_files = {
+    "18q": "../data/mc_18q.root",
+    "18r": "../data/mc_18r.root"
+}
 
-def create_tgrapherrors(h_rc, h_mc):
-    n_bins = h_rc.GetNbinsX()
-    x = array('d', [0] * n_bins)
-    y = array('d', [0] * n_bins)
-    ex = array('d', [0] * n_bins)
-    ey = array('d', [0] * n_bins)
+# 粒子列表
+particles = [
+    "poshadron", "neghadron",
+    "pospion_tpc_region", "negpion_tpc_region",
+    "pospion_tof_region", "negpion_tof_region",
+    "proton", "antiproton", "lambda", "antilambda"
+]
 
-    for i in range(1, n_bins + 1):
-        bin_center = h_rc.GetBinCenter(i)
-        bin_width = h_rc.GetBinWidth(i)
+# 创建输出文件
+out_eff = ROOT.TFile("eff_pt_cent.root", "RECREATE")
+out_nue = ROOT.TFile("eff_pt_calib_cent.root", "RECREATE")
 
-        passed = h_rc.GetBinContent(i)
-        total = h_mc.GetBinContent(i)
+# 创建TList容器
+eff_list = ROOT.TList()
+eff_list.SetName("fListEFF")
+eff_list.SetOwner(False)
 
-        # Calculate efficiency and error
-        eff = passed / total if total > 0 else 0
-        # 使用二项分布误差计算
-        err = math.sqrt(eff * (1 - eff) / total) if total > 0 and 0 < eff < 1 else 0
+nue_list = ROOT.TList()
+nue_list.SetName("fListNUE")
+nue_list.SetOwner(False)
 
-        x[i-1] = bin_center
-        y[i-1] = eff
-        ex[i-1] = bin_width / 2
-        ey[i-1] = err
+# 处理两个输入文件
+for period, input_file_path in input_files.items():
+    # 打开输入文件
+    input_file = ROOT.TFile.Open(input_file_path)
+    if not input_file or input_file.IsZombie():
+        print(f"Error: Could not open input file {input_file_path}")
+        continue
 
-    graph = ROOT.TGraphErrors(n_bins, x, y, ex, ey)
-    return graph
+    # 打印ROOT文件内容以便调试
+    print(f"Input file contents for {period}:")
+    input_file.ls()
 
-def main():
-    ROOT.TH1.AddDirectory(False)  # Prevent ROOT from automatically managing objects
-    file_mc_18q = ROOT.TFile.Open("../data/mc_18q.root")
-    file_mc_18r = ROOT.TFile.Open("../data/mc_18r.root")
-    out = ROOT.TFile("all_eff_pt.root", "RECREATE")
+    # 获取ResultsList_default
+    reslist = input_file.Get("default/ResultsList_default")
+    if not reslist:
+        print(f"Error: Could not find default/ResultsList_default in the input file {input_file_path}")
+        input_file.Close()
+        continue
 
-    # Create TList to store histograms
-    fListNUE = ROOT.TList()
-    fListNUE.SetName("fListNUE")
-    fListNUE.SetOwner(False)  # Do not take ownership of objects
+    # 主循环：处理每种粒子
+    for particle in particles:
+        edges = pt_bins_dict[particle]
 
-    # Store information for later conversion to TH1D
-    eff_info = []
+        # 从ResultsList_default获取直方图
+        h_mc_name = f"h2_pt_mc_{particle}"
+        h_rc_name = f"h2_pt_rc_real_{particle}"
 
-    particles = [
-        "poshadron", "pospion", "neghadron", "negpion",
-        "proton", "antiproton", "lambda", "antilambda"
-    ]
-    datasets = ["18q", "18r"]
-    kinds = ["rc", "rc_real"]
+        # Fix syntax error - Python uses 'or' instead of '||'
+        if particle == "pospion_tpc_region" or particle == "pospion_tof_region":
+            h_mc_name = "h2_pt_mc_pospion"
+            h_rc_name = "h2_pt_rc_real_pospion"
+        if particle == "negpion_tpc_region" or particle == "negpion_tof_region":
+            h_mc_name = "h2_pt_mc_negpion"
+            h_rc_name = "h2_pt_rc_real_negpion"
 
-    for dataset, f in zip(datasets, [file_mc_18q, file_mc_18r]):
-        dname = "MyTask"
-        l = f.Get(f"{dname}/ResultsList")
-        for particle in particles:
-            for kind in kinds:
-                hname_mc = f"h_pt_{particle}_mc"
-                hname_rc = f"h_pt_{particle}_{kind}"
-                print(f"Trying {particle} {dataset} {kind}...")
+        h_mc = reslist.FindObject(h_mc_name)
+        h_rc = reslist.FindObject(h_rc_name)
 
-                h_mc = l.FindObject(hname_mc)
-                h_rc = l.FindObject(hname_rc)
-                if not h_mc or not h_rc:
-                    print(f"Skip {particle} {dataset} {kind}: missing hist")
-                    continue
+        print(f"Looking for histograms in {period}: {h_mc_name} and {h_rc_name}")
 
-                # rebin
-                custom_bins = get_rebin_edges(particle)
-                if custom_bins:
-                    h_mc_reb = rebin_hist(h_mc, custom_bins)
-                    h_rc_reb = rebin_hist(h_rc, custom_bins)
-                else:
-                    h_mc_reb = h_mc.Clone()
-                    h_rc_reb = h_rc.Clone()
-
-                inconsistent = find_inconsistent_bins(h_rc_reb, h_mc_reb)
-                if inconsistent:
-                    ptbins = []
-                    for ibin in inconsistent:
-                        low = h_mc_reb.GetXaxis().GetBinLowEdge(ibin)
-                        high = h_mc_reb.GetXaxis().GetBinUpEdge(ibin)
-                        ptbins.append(f"[{low:.3f}, {high:.3f})")
-                    print(f"    -- 某些bin: passed > total, 比如第 {inconsistent} bin, pT区间: {ptbins}（仅显示前5个）")
-                    print(f"    -> Skip {particle} {dataset} {kind}: bin content inconsistent or missing hist")
-                    continue
-
-                out.cd()
-                # 检查是否为rc类型且不是hadron粒子
-                is_hadron = "hadron" in particle  # 检查particle名称中是否包含"hadron"
-
-                if kind == "rc" and not is_hadron:
-                    # 对于rc类型且非hadron粒子，使用TGraphErrors
-                    graph = create_tgrapherrors(h_rc_reb, h_mc_reb)
-                    graph.SetName(f"graph_ratio_pt_{particle}_{dataset}")
-                    graph.SetTitle(f"Efficiency for {particle} ({dataset})")
-                    fListNUE.Add(graph)
-                    print(f"    -> Added graph_ratio_pt_{particle}_{dataset} as TGraphErrors to fListNUE")
-                else:  # rc_real或hadron粒子
-                    # 对于rc_real或hadron粒子仍然使用TEfficiency
-                    eff = ROOT.TEfficiency(h_rc_reb, h_mc_reb)
-                    if kind == "rc_real":
-                        eff.SetName(f"eff_pt_{particle}_{dataset}")
-                    else:
-                        eff.SetName(f"eff_pt_{particle}_{dataset}")
-                    fListNUE.Add(eff)
-                    # Store efficiency name and particle/dataset/kind information for later conversion
-                    eff_name = eff.GetName()
-                    eff_info.append({
-                        "name": eff_name,
-                        "particle": particle,
-                        "dataset": dataset,
-                        "kind": kind
-                    })
-                    print(f"    -> Added eff_pt_{particle}{'_real' if kind=='rc_real' else ''}_{dataset} as TEfficiency to fListNUE")
-
-    # Write the TList to the output file
-    out.cd()
-    fListNUE.Write("fListNUE", ROOT.TObject.kSingleKey)
-    # Clear the list without deleting objects before closing the file
-    fListNUE.SetOwner(False)
-    fListNUE.Clear()
-    out.Close()
-    print("All done! Saved fListNUE to all_eff_pt.root")
-
-    # Convert TEfficiency objects to TH1D and save to a new file
-    print("\nConverting TEfficiency objects to TH1D...")
-
-    # Re-read the input files to process the TEfficiency objects
-    ROOT.TH1.AddDirectory(False)  # Prevent ROOT from automatically managing objects
-    file_mc_18q = ROOT.TFile.Open("mc_18q.root")
-    file_mc_18r = ROOT.TFile.Open("mc_18r.root")
-    calib_file = ROOT.TFile("eff_pt_calib.root", "RECREATE")
-
-    # Also open the original efficiency file to use as reference
-    orig_file = ROOT.TFile("all_eff_pt.root", "READ")
-
-    # Create TList for calibration file
-    fListNUE_calib = ROOT.TList()
-    fListNUE_calib.SetName("fListNUE")
-    fListNUE_calib.SetOwner(False)  # Do not take ownership of objects
-
-    for info in eff_info:
-        particle = info["particle"]
-        dataset = info["dataset"]
-        kind = info["kind"]
-        eff_name = info["name"]
-
-        # Get data from the correct source file
-        f = file_mc_18q if dataset == "18q" else file_mc_18r
-        dname = "MyTask"
-        l = f.Get(f"{dname}/ResultsList")
-
-        # Get the original histograms
-        hname_mc = f"h_pt_{particle}_mc"
-        hname_rc = f"h_pt_{particle}_{kind}"
-
-        h_mc = l.FindObject(hname_mc)
-        h_rc = l.FindObject(hname_rc)
-
+        # 检查直方图是否存在
         if not h_mc or not h_rc:
-            print(f"    -> Skip converting {eff_name}: missing original histograms")
+            print(f"[Error] skip {particle} in {period}: missing histograms")
             continue
 
-        # Apply rebinning as in the original process
-        custom_bins = get_rebin_edges(particle)
-        if custom_bins:
-            h_mc_reb = rebin_hist(h_mc, custom_bins)
-            h_rc_reb = rebin_hist(h_rc, custom_bins)
-        else:
-            h_mc_reb = h_mc.Clone()
-            h_rc_reb = h_rc.Clone()
+        # 检查是否为TH2类型
+        if not isinstance(h_mc, ROOT.TH2) or not isinstance(h_rc, ROOT.TH2):
+            print(f"[Error] skip {particle} in {period}: histograms are not TH2D")
+            continue
 
-        # Get the original TEfficiency from the file as reference
-        orig_eff = orig_file.Get(eff_name)
+        # 处理每个中心度bin
+        for cent_bin in range(1, 8):  # 7个中心度bin，从1开始计数
+            # 从TH2D提取特定中心度bin的投影
+            h_mc_proj = h_mc.ProjectionY(f"{particle}_{period}_mc_cent{cent_bin-1}_proj", cent_bin, cent_bin)
+            h_rc_proj = h_rc.ProjectionY(f"{particle}_{period}_rc_cent{cent_bin-1}_proj", cent_bin, cent_bin)
 
-        # Create a new TH1D with the same binning
-        h_eff = h_mc_reb.Clone(eff_name + "_hist")
-        h_eff.Reset()  # Clear all bin contents
-        h_eff.SetTitle(eff_name + " (Histogram)")
+            print(f"Projection for {particle}, {period}, cent{cent_bin-1}: MC entries={h_mc_proj.GetEntries()}, RC entries={h_rc_proj.GetEntries()}")
 
-        # Fill the histogram with efficiency values
-        for i in range(1, h_eff.GetNbinsX() + 1):
-            passed = h_rc_reb.GetBinContent(i)
-            total = h_mc_reb.GetBinContent(i)
+            # 如果投影为空，跳过
+            if h_mc_proj.GetEntries() == 0 or h_rc_proj.GetEntries() == 0:
+                print(f"[Error] skip {particle} {period} cent{cent_bin-1}: empty projection")
+                continue
 
-            # Calculate efficiency
-            if total > 0:
-                eff_value = passed / total
-                # Calculate error using binomial distribution
-                eff_error = math.sqrt(eff_value * (1 - eff_value) / total) if 0 < eff_value < 1 else 0
+            # 重新分bin
+            h_mc_reb = rebin(h_mc_proj, edges)
+            h_rc_reb = rebin(h_rc_proj, edges)
 
-                h_eff.SetBinContent(i, eff_value)
-                h_eff.SetBinError(i, eff_error)
+            # 准备TGraphErrors数据
+            nb = h_mc_reb.GetNbinsX()
+            x  = array('d')
+            y  = array('d')
+            ex = array('d')
+            ey = array('d')
+            y_w = array('d')
+            ey_w = array('d')
 
-        # Add the TH1D to the TList
-        fListNUE_calib.Add(h_eff)
-        print(f"    -> Converted {eff_name} to TH1D and added to fListNUE")
+            bad = False
+            for ib in range(1, nb+1):
+                passed = h_rc_reb.GetBinContent(ib)
+                total  = h_mc_reb.GetBinContent(ib)
 
-    # Write the TList to the calibration file
-    calib_file.cd()
-    fListNUE_calib.Write("fListNUE", ROOT.TObject.kSingleKey)
+                # 检查数据有效性
+                if passed > total:
+                    print(f"[WARN] bin {ib} in {particle} {period} cent{cent_bin-1}: passed ({passed}) > total ({total})")
+                    bad = True
+                    break
 
-    # Clear the list without deleting objects before closing the file
-    fListNUE_calib.SetOwner(False)
-    fListNUE_calib.Clear()
+                cen  = h_mc_reb.GetBinCenter(ib)
+                wid  = h_mc_reb.GetBinWidth(ib)/2.0
 
-    file_mc_18q.Close()
-    file_mc_18r.Close()
-    orig_file.Close()
-    calib_file.Close()
-    print("All done! Saved fListNUE to eff_pt_calib.root")
+                # 计算效率和误差
+                eff  = passed/total if total>0 else 0.
+                err  = math.sqrt(eff*(1-eff)/total) if 0<eff<1 and total>0 else 0.
 
-if __name__ == "__main__":
-    main()
+                # 添加数据点
+                x.append(cen)
+                ex.append(wid)
+                y.append(eff)
+                ey.append(err)
+
+                # 计算权重和误差
+                w     = 1./eff if eff>0 else 0.
+                err_w = err/(eff**2) if eff>0 else 0.
+                y_w.append(w)
+                ey_w.append(err_w)
+
+            if bad:
+                print(f"[WARN] skip {particle} {period} cent{cent_bin-1}: passed>total")
+                continue
+
+            # 创建效率图
+            g_eff = ROOT.TGraphErrors(nb, x, y, ex, ey)
+            g_eff_name = f"eff_pt_{particle}_{period}_cent{cent_bin-1}"
+            g_eff.SetName(g_eff_name)
+            g_eff.SetTitle(f"Efficiency {particle} {period} {cent_ranges[cent_bin-1]};p_T;#varepsilon")
+
+            # 创建权重图
+            g_w = ROOT.TGraphErrors(nb, x, y_w, ex, ey_w)
+            g_w_name = f"nue_pt_{particle}_{period}_cent{cent_bin-1}"
+            g_w.SetName(g_w_name)
+            g_w.SetTitle(f"1/eff {particle} {period} {cent_ranges[cent_bin-1]};p_T;weight")
+
+            # 添加到输出列表
+            eff_list.Add(g_eff)
+            nue_list.Add(g_w)
+
+            print(f" --> added {g_eff.GetName()} to eff_pt_cent.root and {g_w.GetName()} to eff_pt_calib_cent.root")
+
+    # 关闭当前输入文件
+    input_file.Close()
+
+# 将图形写入ROOT文件
+out_eff.cd()
+eff_list.Write("fListEFF", ROOT.TObject.kSingleKey)
+out_eff.Close()
+
+out_nue.cd()
+nue_list.Write("fListNUE", ROOT.TObject.kSingleKey)
+out_nue.Close()
+
+print("\nEfficiency graphs saved to eff_pt_cent.root (key: fListEFF)")
+print("Weight graphs saved to eff_pt_calib_cent.root (key: fListNUE)")
