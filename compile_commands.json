@@ -1,7 +1,0 @@
-[
-  {
-    "directory": "/Users/wangchunzheng/works/Experiments/cve/EfficiencyCorrection",
-    "command": "/usr/bin/c++ -I/Users/wangchunzheng/alice/sw/osx_arm64/AliRoot/latest/include -I/Users/wangchunzheng/alice/sw/osx_arm64/AliRoot/latest/include/pythia -I/Users/wangchunzheng/alice/sw/osx_arm64/VMC/v2-0-local1/include/vmc -I/Users/wangchunzheng/alice/sw/SOURCES/AliPhysics/0_O2/0/OADB -I/Users/wangchunzheng/alice/sw/SOURCES/AliPhysics/0_O2/0/OADB/COMMON/MULTIPLICITY -I/Users/wangchunzheng/alice/sw/osx_arm64/ROOT/latest/include -std=c++20 -O2 -fPIC -Wall -c ./src/AliAnalysisTaskMyTaskMyMCLambda.cxx -o AliAnalysisTaskMyTaskMyMCLambda.o",
-    "file": "src/AliAnalysisTaskMyTaskMyMCLambda.cxx"
-  }
-]
